@@ -8,17 +8,9 @@ public class CameraController : MonoBehaviour
 
     [SerializeField] float speed;
 
-    private int index = 1;
+    private int index = 2;
 
     private Vector3 target;
-
-
-
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
 
     // Update is called once per frame
     private void Update()
@@ -27,6 +19,8 @@ public class CameraController : MonoBehaviour
         else if (Input.GetKeyDown(KeyCode.Alpha2)) index = 1;
         else if (Input.GetKeyDown(KeyCode.Alpha3)) index = 2;
         else if (Input.GetKeyDown(KeyCode.Alpha4)) index = 3;
+
+        target = povs[index].position;
     }
 
     private void FixedUpdate()

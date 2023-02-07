@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using Unity.VisualScripting;
+using UnityEngine.InputSystem;
 
 public class PlaneController : MonoBehaviour
 {
@@ -17,10 +18,13 @@ public class PlaneController : MonoBehaviour
     public float lift = 135f;
 
     [SerializeField] Animator animator;
+    [SerializeField] GameObject landingCollider;
+    [SerializeField] Collider[] collArr;
     public GameObject bellyObj;
     public GameObject altimeterObj;
     public LayerMask terrainLayer;
 
+    
 
     private bool isGrounded;
     private float throttle;
@@ -56,23 +60,29 @@ public class PlaneController : MonoBehaviour
     private void InputHandling()
     {
         // Set Rotational values from out inputs
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (Input.GetKeyDown(KeyCode.Joystick2Button4)) // Button 4
         {
             if (animator.GetBool("isFlying") && currentAlt <= 6 && currentThrottle == 0)
             {
+                landingCollider.SetActive(true);
+                for (int i = 0; i < collArr.Length; i++) collArr[i].enabled = false;
+
                 animator.SetBool("isFlying", false);
                 animator.SetBool("isFlapping", false);
             }
             else
             {
+                landingCollider.SetActive(false);
+                for (int i = 0; i < collArr.Length; i++) collArr[i].enabled = true;
                 animator.SetBool("isFlying", true);
                 animator.SetBool("isFlapping", true);
+               rb.AddForce(Vector3.up * 5, ForceMode.VelocityChange);
             }
         }
+
         if (animator.GetBool("isFlying"))
         {
-            if (Input.GetKey(KeyCode.LeftAlt)) throttle += throttleIncriment;
-            else if (Input.GetKey(KeyCode.LeftControl)) throttle -= throttleIncriment;
+            throttle += throttleIncriment * Input.GetAxis("Throttle");
         }
 
         yaw = Input.GetAxis("Yaw");
@@ -90,6 +100,7 @@ public class PlaneController : MonoBehaviour
         pitchAmount = -Mathf.DeltaAngle(transform.eulerAngles.x, 0);
         print("Roll: " + rollAmount);
         print("Pitch: " + pitchAmount);
+        print(Input.GetAxis("Throttle"));
         PlatformController.singleton.Roll = PlatformController.singleton.MapRange(rollAmount, -45, 45, -10, 10);
         PlatformController.singleton.Pitch = PlatformController.singleton.MapRange(-pitchAmount, -55, 55, -10, 10);
     }
@@ -106,23 +117,11 @@ public class PlaneController : MonoBehaviour
         {
             rb.AddForce(transform.forward * maxThrust * throttle);
             rb.AddTorque(transform.up * yaw * responsiveness);
-            if (pitch > 0 && pitchAmount < 40)
-            {
-                rb.AddTorque(transform.right * pitch * responsiveness);
-            }
-            else if (pitch < 0 && pitchAmount > -40)
-            {
-                rb.AddTorque(transform.right * pitch * responsiveness);
-            }
-            if (roll > 0 && rollAmount < 30)
-            {
-                rb.AddTorque(-transform.forward * roll * responsiveness);
-            }
-            else if (roll < 0 && rollAmount > -30)
-            {
-                rb.AddTorque(-transform.forward * roll * responsiveness);
-            }
-
+            
+            rb.AddTorque(transform.right * pitch * responsiveness);
+           
+            rb.AddTorque(-transform.forward * roll * responsiveness);
+     
             rb.AddForce(Vector3.up * rb.velocity.magnitude * lift);
         }
     }

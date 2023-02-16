@@ -9,7 +9,7 @@ public class Lander : MonoBehaviour
     [SerializeField] Transform t3;
 
     [SerializeField] LayerMask terrainLayer;
-    [SerializeField] float landingHeight = 5;
+    [SerializeField] float landingHeight = 20;
 
     void Start()
     {

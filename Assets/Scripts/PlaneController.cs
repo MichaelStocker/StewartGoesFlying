@@ -158,10 +158,12 @@ public class PlaneController : MonoBehaviour
 
         animator.SetBool("isFlying", false);
         animator.SetBool("isFlapping", false);
+        rb.velocity = Vector3.zero;
     }
     public void TakeoffAnim()
     {
         animator.SetBool("isFlying", true);
         animator.SetBool("isFlapping", true);
+        //rb.constraints = RigidbodyConstraints.None;
     }
 }

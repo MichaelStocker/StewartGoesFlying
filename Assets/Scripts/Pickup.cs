@@ -4,14 +4,16 @@ using UnityEngine;
 
 public class Pickup : MonoBehaviour
 {
-
+    bool isActive = true;
     public void OnTriggerEnter(Collider other)
     {
-        if (other.transform.root.tag == "Player")
+        if (other.transform.root.tag == "Player" && isActive)
         {
+            isActive = false;
+            print(other.gameObject.name);
             PlaneController  planeController = other.transform.root.GetComponent<PlaneController>();
-            Destroy(this.gameObject);
             planeController.eggsCollected++;
+            Destroy(this.gameObject);
         }
     }
 

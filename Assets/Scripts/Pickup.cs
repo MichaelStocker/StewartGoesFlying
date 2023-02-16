@@ -4,23 +4,14 @@ using UnityEngine;
 
 public class Pickup : MonoBehaviour
 {
-    [SerializeField] GameObject egg;
-    [SerializeField] GameObject rock;
-
 
     public void OnTriggerEnter(Collider other)
     {
-        Item temp = other.GetComponent<Item>();
-        if (temp != null)
+        if (other.transform.root.tag == "Player")
         {
-            if (temp.itemType == Item.types.Rock)
-            {
-                // Rock Stuff
-            }
-            if (temp.itemType == Item.types.Egg)
-            {
-                // Egg Stuff
-            }
+            PlaneController  planeController = other.transform.root.GetComponent<PlaneController>();
+            Destroy(this.gameObject);
+            planeController.eggsCollected++;
         }
     }
 

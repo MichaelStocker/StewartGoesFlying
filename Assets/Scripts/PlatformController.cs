@@ -10,7 +10,7 @@ public class PlatformController : MonoBehaviour
 
     [SerializeField] Slider[] sliders; // list of references to the sliders
     [SerializeField] bool useSliders = false;
-
+    
     public enum PlatformModes { Mode_8Bit, Mode_Float32 };
     [SerializeField] PlatformModes mode = PlatformModes.Mode_Float32;
 

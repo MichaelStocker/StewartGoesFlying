@@ -33,10 +33,9 @@ public class Lander : MonoBehaviour
                     Vector3 vc = Vector3.Cross(v1, v2);
 
                     float amount = 1 - Mathf.Clamp01((transform.position - hitC.point).magnitude / landingHeight);
-                    print(amount);
 
                     Quaternion dq = Quaternion.FromToRotation(transform.up, vc);
-                    transform.rotation = Quaternion.Slerp(transform.rotation, dq * transform.rotation, 0.002f);
+                    transform.rotation = Quaternion.Slerp(transform.rotation, dq * transform.rotation, 0.05f);
                 }
             }
         }

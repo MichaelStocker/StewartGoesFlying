@@ -15,6 +15,7 @@ public class Pickup : MonoBehaviour
             PlaneController  planeController = other.transform.root.GetComponent<PlaneController>();
             Instantiate(pickupParticle, transform.position, transform.rotation);
             planeController.eggsCollected++;
+            if (planeController.eggsCollected >= planeController.maxEggs) planeController.GameOver();
             Destroy(this.gameObject);
         }
     }

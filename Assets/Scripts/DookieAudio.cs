@@ -5,6 +5,7 @@ using UnityEngine;
 public class DookieAudio : MonoBehaviour
 {
     public AudioClip dookieClip;
+    PlaneController planeController;
     bool isActive = true;
     float timeNow = 0;
     float delay = 5;
@@ -26,7 +27,7 @@ public class DookieAudio : MonoBehaviour
         if (other.transform.root.tag == "Player" && isActive)
         {
             isActive = false;
-            AudioSource audioSource = other.transform.root.GetComponent<AudioSource>();
+            AudioSource audioSource = planeController.secAud;
             audioSource.volume = 1;
             audioSource.PlayOneShot(dookieClip);
             timeNow = Time.deltaTime;

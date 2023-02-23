@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Pickup : MonoBehaviour
 {
+    public GameObject pickupParticle;
     bool isActive = true;
     public void OnTriggerEnter(Collider other)
     {
@@ -12,6 +13,7 @@ public class Pickup : MonoBehaviour
             isActive = false;
             print(other.gameObject.name);
             PlaneController  planeController = other.transform.root.GetComponent<PlaneController>();
+            Instantiate(pickupParticle, transform.position, transform.rotation);
             planeController.eggsCollected++;
             Destroy(this.gameObject);
         }

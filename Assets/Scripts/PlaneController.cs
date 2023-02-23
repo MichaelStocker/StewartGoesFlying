@@ -18,6 +18,7 @@ public class PlaneController : MonoBehaviour
     [Header("Misc")]
     [SerializeField] TextMeshProUGUI statsHud;
     [SerializeField] TextMeshProUGUI titleHud;
+    [SerializeField] TextMeshProUGUI timerHUD;
     [SerializeField] Animator animator;
     [SerializeField] GameObject landingCollider;
     [SerializeField] Collider[] collArr;
@@ -27,7 +28,6 @@ public class PlaneController : MonoBehaviour
     public AudioClip[] flapAudio;
     public int maxEggs;
 
-    private bool isGrounded;
     private float throttle;
     private float yaw;
     private float pitch;
@@ -36,6 +36,9 @@ public class PlaneController : MonoBehaviour
     int currentAlt;
     int currentSpeed;
     int currentThrottle;
+
+    float activeTimer = 0;
+    System.TimeSpan rtime;
 
     public int eggsCollected;
 
@@ -55,6 +58,8 @@ public class PlaneController : MonoBehaviour
 
     private void Awake()
     {
+        PlayerPrefs.DeleteKey("BestTime");
+        rtime = System.TimeSpan.FromSeconds(PlayerPrefs.GetFloat("BestTime", 12345.0f));
         mainAud = GetComponent<AudioSource>();
         rb = GetComponent<Rigidbody>();
         //PlatformController.singleton.Init("COM3", 115200);
@@ -94,6 +99,13 @@ public class PlaneController : MonoBehaviour
 
     private void Update()
     {
+
+        if (Input.GetKeyDown(KeyCode.Backspace))
+        {
+            PlayerPrefs.DeleteKey("BestTime");
+            GameOver();
+        }
+        activeTimer += Time.deltaTime;
         InputHandling();
         UpdateHUD();
         rollAmount = Mathf.DeltaAngle(transform.eulerAngles.z, 0);
@@ -138,6 +150,11 @@ public class PlaneController : MonoBehaviour
         statsHud.text += "Airspeed: " + currentSpeed + " km/h\n";
         statsHud.text += "Altitude: " + currentAlt;
         titleHud.text = "Objective: Collect All Dino Eggs!\nRemaining Eggs: " + (maxEggs - eggsCollected);
+
+        System.TimeSpan timer = System.TimeSpan.FromSeconds(activeTimer);
+        timerHUD.text = "Your Time: " + timer.ToString("hh':'mm':'ss") + "\nTime To Beat: " + rtime.ToString("hh':'mm':'ss");
+
+
     }
 
     public void Liftoff()
@@ -165,5 +182,14 @@ public class PlaneController : MonoBehaviour
         animator.SetBool("isFlying", true);
         animator.SetBool("isFlapping", true);
         //rb.constraints = RigidbodyConstraints.None;
+    }
+    public void GameOver()
+    {
+        float highScore = PlayerPrefs.GetFloat("BestTime", 10000.0f);
+        if (highScore > activeTimer)
+        {
+            PlayerPrefs.SetFloat("BestTime", activeTimer);
+            rtime = System.TimeSpan.FromSeconds(PlayerPrefs.GetFloat("BestTime", 12345.0f));
+        }
     }
 }
